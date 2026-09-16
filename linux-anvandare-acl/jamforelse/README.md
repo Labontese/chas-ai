@@ -7,7 +7,7 @@ Studiematerial för YH-utbildningen IT-infrastrukturspecialist (ISCX26, Chas Aca
 - [`gemini_nyanvandare.sh`](gemini_nyanvandare.sh), skrivet av Gemini
 - [`oscar_skapa_anvandare.sh`](oscar_skapa_anvandare.sh), Oscars variant, som tolkar uppgiften annorlunda och testas med en egen svit (avsnitt 9)
 
-Avsnitt 10 är ett färdigt underlag för redovisningen.
+Avsnitt 10 är ett färdigt underlag för redovisningen. Alla jämförelser finns också samlade i [`JAMFORELSE.md`](JAMFORELSE.md).
 
 Allt är testat i Ubuntu 24.04 LTS (september 2026). Testmiljön saknade `sudo`, så rättighetstesterna kördes med `runuser -u`, som ger samma resultat som `sudo -u`.
 
@@ -15,6 +15,7 @@ Allt är testat i Ubuntu 24.04 LTS (september 2026). Testmiljön saknade `sudo`,
 
 | Fil | Innehåll |
 |---|---|
+| [`JAMFORELSE.md`](JAMFORELSE.md) | Alla jämförelser och testmatriser samlade på ett ställe |
 | [`nyanvandare.sh`](nyanvandare.sh) | Claudes skript (avsnitt 3) |
 | [`rollback_nyanvandare.sh`](rollback_nyanvandare.sh) | Tar bort användare, grupper och katalog igen (avsnitt 6) |
 | [`gemini_nyanvandare.sh`](gemini_nyanvandare.sh) | Geminis skript, oförändrat (bilaga A) |

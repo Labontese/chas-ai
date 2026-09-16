@@ -9,6 +9,7 @@ Uppgift kring användarhantering och behörigheter på Ubuntu Server: setgid, st
 | [`PROMPT.md`](PROMPT.md) | Den härdade prompten och en sammanfattning av vad som härdades mot originalet |
 | [`skapa_nyanvandare.sh`](skapa_nyanvandare.sh) | Skriptet som genererades utifrån prompten |
 | [`jamforelse/`](jamforelse/) | Prompter, jämförelse mellan tre skript och Oscars variant, testsviter, testresultat och underlag för redovisning |
+| [`jamforelse/JAMFORELSE.md`](jamforelse/JAMFORELSE.md) | Samlad jämförelse av alla fyra skript med testresultat |
 
 I [`jamforelse/`](jamforelse/) finns också `nyanvandare.sh` (Claude), `gemini_nyanvandare.sh` (Gemini), `oscar_skapa_anvandare.sh` (Oscars interaktiva variant med egen testsvit), rollback-skriptet, en fullständig genomgång inför muntlig validering och ett underlag för redovisningen (avsnitt 10). Börja med [`jamforelse/README.md`](jamforelse/README.md).
 
