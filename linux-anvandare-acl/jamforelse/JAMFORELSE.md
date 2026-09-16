@@ -26,7 +26,7 @@ Alla tester kördes i Ubuntu 24.04.4 LTS den 16 september 2026, med `runuser -u`
 | [`nyanvandare.sh`](nyanvandare.sh) | Claude, utifrån den avancerade prompten (README 1.3) | Delad katalog med setgid, sticky bit och ACL |
 | [`../skapa_nyanvandare.sh`](../skapa_nyanvandare.sh) | Den härdade prompten ([`../PROMPT.md`](../PROMPT.md)) | Samma som ovan |
 | [`gemini_nyanvandare.sh`](gemini_nyanvandare.sh) | Gemini, utifrån den avancerade prompten | Samma som ovan |
-| [`oscar_skapa_anvandare.sh`](oscar_skapa_anvandare.sh) | Oscars variant (prompt och verktyg fylls i under README 1.6) | Interaktiv användarskapare med privata mappar i hemkatalogen |
+| [`oscar_skapa_anvandare.sh`](oscar_skapa_anvandare.sh) | Oscars variant (ChatGPT, prompten finns i README 1.6) | Interaktiv användarskapare med privata mappar i hemkatalogen |
 
 Till jämförelsen hör också två lagade versioner, [`gemini_lagad.sh`](gemini_lagad.sh) och [`oscar_lagad.sh`](oscar_lagad.sh), som visar vad som återstår när de mest akuta felen är borta.
 

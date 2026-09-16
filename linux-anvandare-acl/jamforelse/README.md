@@ -178,13 +178,26 @@ lägg up till git
 
 ### 1.6 Oscars prompt
 
-Fyll i Oscars prompt och vilket AI-verktyg han använde, så att redovisningen kan visa den bredvid de andra prompterna.
+**AI-verktyg:** ChatGPT
+
+Oscars prompt (ordagrant):
 
 ```text
-[Klistra in Oscars prompt här]
+Jag vill att du ska skapa en script i bash där vi ska skapa nya användare och de
+användare ska få tilldelade till rätt avdelningar, roll & rättigheter. Därefter
+tilldela mappar Dokument, Bilder, Appar, Videos, där endast den nya användaren har
+tillgång till. Därefter vill vi att den ska få ett fint välkomstmeddelande och att
+den är tilldelad att vi kom överens om, sedan efter det vill vi att den ska få namnen
+för andra personer i andelningen. Du som AI ska även ge en detaljerad förklaring efter
+scripten vad alla delar gör och varför du använde de kommandos du gjorde
 ```
 
-AI-verktyg: [fyll i]
+Prompten förklarar varför Oscars skript blev så annorlunda än de andra tre. Den ber om
+**privata mappar per användare** (inte en delad avdelningskatalog), nämner **avdelning och
+roll** men inte setgid, sticky bit eller ACL, och säger ingenting om idempotens, dry-run,
+validering eller lösenordshantering. Den bad däremot uttryckligen om en **detaljerad
+förklaring efter skriptet**, vilket ChatGPT levererade. Kort sagt: en annan uppgift, ställd i
+vardagsspråk utan de tekniska kraven — därav ett interaktivt skript med annan inriktning.
 
 ---
 
@@ -1266,7 +1279,7 @@ Det här syns i utdatan:
 - **Prompten styr även felen.** Den avancerade prompten krävde `set -euo pipefail`. Gemini kopierade det rakt av, och därför fungerar dess `trap` aldrig inuti funktioner. Claude lade till `-E` och förklarade varför. Den härdade prompten kräver `-E` uttryckligen. En brist i prompten gick alltså rakt in i koden hos den AI som följde den bokstavligt.
 - **Mätbar skillnad:** med samma 49 tester fick Claude 49, den härdade prompten 48 och Gemini 30. Oscars variant fick 16 av 25 i en egen svit, eftersom den löser en annan tolkning av uppgiften.
 
-Om Oscars prompt fylls i under avsnitt 1.6 kan den också användas i jämförelsen.
+Oscars prompt (1.6) är ett tredje talande exempel: den ställdes i vardagsspråk till ChatGPT, utan de tekniska kraven, och gav därför en helt annan tolkning av uppgiften. Det visar att det inte bara är AI-modellen som avgör resultatet, utan minst lika mycket hur prompten formuleras.
 
 ### 10.2 Exempel 1: kod som ser rätt ut men aldrig fungerar
 
