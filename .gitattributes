@@ -1,0 +1,4 @@
+# Skalskript måste ha LF-radslut, annars fungerar de inte i Linux
+*.sh  text eol=lf
+*.md  text eol=lf
+*.txt text eol=lf

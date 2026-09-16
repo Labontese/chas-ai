@@ -1,0 +1,360 @@
+Testsvit startad 2026-09-16 11:49:12 på Ubuntu 24.04.4 LTS
+
+=== nyanvandare.sh (nyanvandare.sh, katalogflagga --dir) ===
+-- Dry-run och validering
+  Dry-run: returkod                                Godkänt
+  Dry-run: inget ändras på systemet                Godkänt
+  Validering: vägrar /etc                          Godkänt
+  Validering: vägrar /etc/ (avslutande snedstreck) Godkänt
+  Validering: vägrar /etc via '..'                 Godkänt
+  Validering: vägrar /tmp                          Godkänt
+  Validering: vägrar katalog under /usr            Godkänt
+  Validering: vägrar relativ sökväg                Godkänt
+  Validering: vägrar versaler i användarnamn       Godkänt
+  Validering: vägrar användarnamn > 32 tecken      Godkänt
+  Validering: vägrar ogiltigt gruppnamn            Godkänt
+  Tydligt fel vid flagga utan värde                Godkänt
+-- Körning 1
+  Körning 1: returkod                              Godkänt
+  Körning 1: användaren skapad                     Godkänt
+  Körning 1: lösenord satt                         Godkänt
+  Körning 1: lösenordsbyte krävs                   Godkänt
+  Körning 1: katalogen skapad                      Godkänt
+  Lösenord visas inte i omdirigerad utdata         Godkänt
+  Lösenord finns inte i loggfilen                  Godkänt
+-- Körning 2 (idempotens)
+  Körning 2: returkod                              Godkänt
+  Körning 2: lösenord satt                         Godkänt
+  Körning 2: lösenordsbyte krävs                   Godkänt
+-- Struktur
+  Katalog: mode                                    Godkänt
+  Katalog: ägare                                   Godkänt
+  ACL: revision r-x på katalogen                   Godkänt
+  Default-ACL: revision r-x                        Godkänt
+  Default-ACL: övriga ---                          Godkänt
+  anna i ekonomi (id)                              Godkänt
+  anna listad i getent group ekonomi               Godkänt
+  Loggfil inte läsbar för alla                     Godkänt
+-- Rättighetsmatris
+  anna skapar fil                                  Godkänt
+  anna skapar underkatalog                         Godkänt
+  kollega läser annas fil                          Godkänt
+  kollega skriver i annas fil                      Godkänt
+  kollega raderar annas fil                        Godkänt
+  revisor listar katalogen                         Godkänt
+  revisor läser fil                                Godkänt
+  revisor skapar fil                               Godkänt
+  revisor skriver i fil                            Godkänt
+  revisor raderar fil                              Godkänt
+  utomstående listar katalogen                     Godkänt
+  utomstående läser fil                            Godkänt
+-- Arv
+  Ny fil: mode och ägare                           Godkänt
+  Ny fil: revision effektivt r--                   Godkänt
+  Underkatalog: ärver setgid                       Godkänt
+  anna raderar egen fil                            Godkänt
+-- Befintlig användare
+  Befintlig användare: returkod                    Godkänt
+  Befintlig användare läggs i ekonomi              Godkänt
+-- Felhantering
+  trap rapporterar fel med radnummer               Godkänt
+
+=== skapa_nyanvandare.sh (../skapa_nyanvandare.sh, katalogflagga --dir) ===
+-- Dry-run och validering
+  Dry-run: returkod                                Godkänt
+  Dry-run: inget ändras på systemet                Godkänt
+  Validering: vägrar /etc                          Godkänt
+  Validering: vägrar /etc/ (avslutande snedstreck) Godkänt
+  Validering: vägrar /etc via '..'                 Godkänt
+  Validering: vägrar /tmp                          Godkänt
+  Validering: vägrar katalog under /usr            Godkänt
+  Validering: vägrar relativ sökväg                Godkänt
+  Validering: vägrar versaler i användarnamn       Godkänt
+  Validering: vägrar användarnamn > 32 tecken      Godkänt
+  Validering: vägrar ogiltigt gruppnamn            Godkänt
+  Tydligt fel vid flagga utan värde                Godkänt
+-- Körning 1
+  Körning 1: returkod                              Godkänt
+  Körning 1: användaren skapad                     Godkänt
+  Körning 1: lösenord satt                         Godkänt
+  Körning 1: lösenordsbyte krävs                   Godkänt
+  Körning 1: katalogen skapad                      Godkänt
+  Lösenord visas inte i omdirigerad utdata         **UNDERKÄNT** (nej)
+  Lösenord finns inte i loggfilen                  Godkänt
+-- Körning 2 (idempotens)
+  Körning 2: returkod                              Godkänt
+  Körning 2: lösenord satt                         Godkänt
+  Körning 2: lösenordsbyte krävs                   Godkänt
+-- Struktur
+  Katalog: mode                                    Godkänt
+  Katalog: ägare                                   Godkänt
+  ACL: revision r-x på katalogen                   Godkänt
+  Default-ACL: revision r-x                        Godkänt
+  Default-ACL: övriga ---                          Godkänt
+  anna i ekonomi (id)                              Godkänt
+  anna listad i getent group ekonomi               Godkänt
+  Loggfil inte läsbar för alla                     Godkänt
+-- Rättighetsmatris
+  anna skapar fil                                  Godkänt
+  anna skapar underkatalog                         Godkänt
+  kollega läser annas fil                          Godkänt
+  kollega skriver i annas fil                      Godkänt
+  kollega raderar annas fil                        Godkänt
+  revisor listar katalogen                         Godkänt
+  revisor läser fil                                Godkänt
+  revisor skapar fil                               Godkänt
+  revisor skriver i fil                            Godkänt
+  revisor raderar fil                              Godkänt
+  utomstående listar katalogen                     Godkänt
+  utomstående läser fil                            Godkänt
+-- Arv
+  Ny fil: mode och ägare                           Godkänt
+  Ny fil: revision effektivt r--                   Godkänt
+  Underkatalog: ärver setgid                       Godkänt
+  anna raderar egen fil                            Godkänt
+-- Befintlig användare
+  Befintlig användare: returkod                    Godkänt
+  Befintlig användare läggs i ekonomi              Godkänt
+-- Felhantering
+  trap rapporterar fel med radnummer               Godkänt
+
+=== skapa_nyanvandare_fore_fix.sh (skapa_nyanvandare_fore_fix.sh, katalogflagga --dir) ===
+-- Dry-run och validering
+  Dry-run: returkod                                Godkänt
+  Dry-run: inget ändras på systemet                Godkänt
+  Validering: vägrar /etc                          Godkänt
+  Validering: vägrar /etc/ (avslutande snedstreck) **UNDERKÄNT** (nej)
+  Validering: vägrar /etc via '..'                 **UNDERKÄNT** (nej)
+  Validering: vägrar /tmp                          **UNDERKÄNT** (nej)
+  Validering: vägrar katalog under /usr            **UNDERKÄNT** (nej)
+  Validering: vägrar relativ sökväg                Godkänt
+  Validering: vägrar versaler i användarnamn       Godkänt
+  Validering: vägrar användarnamn > 32 tecken      Godkänt
+  Validering: vägrar ogiltigt gruppnamn            Godkänt
+  Tydligt fel vid flagga utan värde                Godkänt
+-- Körning 1
+  Körning 1: returkod                              Godkänt
+  Körning 1: användaren skapad                     Godkänt
+  Körning 1: lösenord satt                         Godkänt
+  Körning 1: lösenordsbyte krävs                   Godkänt
+  Körning 1: katalogen skapad                      Godkänt
+  Lösenord visas inte i omdirigerad utdata         **UNDERKÄNT** (nej)
+  Lösenord finns inte i loggfilen                  Godkänt
+-- Körning 2 (idempotens)
+  Körning 2: returkod                              Godkänt
+  Körning 2: lösenord satt                         Godkänt
+  Körning 2: lösenordsbyte krävs                   Godkänt
+-- Struktur
+  Katalog: mode                                    Godkänt
+  Katalog: ägare                                   Godkänt
+  ACL: revision r-x på katalogen                   Godkänt
+  Default-ACL: revision r-x                        Godkänt
+  Default-ACL: övriga ---                          Godkänt
+  anna i ekonomi (id)                              Godkänt
+  anna listad i getent group ekonomi               Godkänt
+  Loggfil inte läsbar för alla                     Godkänt
+-- Rättighetsmatris
+  anna skapar fil                                  Godkänt
+  anna skapar underkatalog                         Godkänt
+  kollega läser annas fil                          Godkänt
+  kollega skriver i annas fil                      Godkänt
+  kollega raderar annas fil                        Godkänt
+  revisor listar katalogen                         Godkänt
+  revisor läser fil                                Godkänt
+  revisor skapar fil                               Godkänt
+  revisor skriver i fil                            Godkänt
+  revisor raderar fil                              Godkänt
+  utomstående listar katalogen                     Godkänt
+  utomstående läser fil                            Godkänt
+-- Arv
+  Ny fil: mode och ägare                           Godkänt
+  Ny fil: revision effektivt r--                   Godkänt
+  Underkatalog: ärver setgid                       Godkänt
+  anna raderar egen fil                            Godkänt
+-- Befintlig användare
+  Befintlig användare: returkod                    Godkänt
+  Befintlig användare läggs i ekonomi              Godkänt
+-- Felhantering
+  trap rapporterar fel med radnummer               Godkänt
+
+=== gemini_nyanvandare.sh (gemini_nyanvandare.sh, katalogflagga --path) ===
+-- Dry-run och validering
+  Dry-run: returkod                                **UNDERKÄNT** (141)
+  Dry-run: inget ändras på systemet                Godkänt
+  Validering: vägrar /etc                          **UNDERKÄNT** (nej)
+  Validering: vägrar /etc/ (avslutande snedstreck) **UNDERKÄNT** (nej)
+  Validering: vägrar /etc via '..'                 **UNDERKÄNT** (nej)
+  Validering: vägrar /tmp                          **UNDERKÄNT** (nej)
+  Validering: vägrar katalog under /usr            **UNDERKÄNT** (nej)
+  Validering: vägrar relativ sökväg                Godkänt
+  Validering: vägrar versaler i användarnamn       Godkänt
+  Validering: vägrar användarnamn > 32 tecken      **UNDERKÄNT** (nej)
+  Validering: vägrar ogiltigt gruppnamn            **UNDERKÄNT** (nej)
+  Tydligt fel vid flagga utan värde                **UNDERKÄNT** (nej)
+-- Körning 1
+  Körning 1: returkod                              **UNDERKÄNT** (141)
+  Körning 1: användaren skapad                     Godkänt
+  Körning 1: lösenord satt                         **UNDERKÄNT** (nej)
+  Körning 1: lösenordsbyte krävs                   **UNDERKÄNT** (nej)
+  Körning 1: katalogen skapad                      **UNDERKÄNT** (nej)
+  Lösenord visas inte i omdirigerad utdata         Godkänt
+  Lösenord finns inte i loggfilen                  Godkänt
+-- Körning 2 (idempotens)
+  Körning 2: returkod                              Godkänt
+  Körning 2: lösenord satt                         **UNDERKÄNT** (nej)
+  Körning 2: lösenordsbyte krävs                   **UNDERKÄNT** (nej)
+-- Struktur
+  Katalog: mode                                    Godkänt
+  Katalog: ägare                                   Godkänt
+  ACL: revision r-x på katalogen                   Godkänt
+  Default-ACL: revision r-x                        Godkänt
+  Default-ACL: övriga ---                          Godkänt
+  anna i ekonomi (id)                              Godkänt
+  anna listad i getent group ekonomi               **UNDERKÄNT** (nej)
+  Loggfil inte läsbar för alla                     **UNDERKÄNT** (nej)
+-- Rättighetsmatris
+  anna skapar fil                                  Godkänt
+  anna skapar underkatalog                         Godkänt
+  kollega läser annas fil                          Godkänt
+  kollega skriver i annas fil                      Godkänt
+  kollega raderar annas fil                        Godkänt
+  revisor listar katalogen                         Godkänt
+  revisor läser fil                                Godkänt
+  revisor skapar fil                               Godkänt
+  revisor skriver i fil                            Godkänt
+  revisor raderar fil                              Godkänt
+  utomstående listar katalogen                     Godkänt
+  utomstående läser fil                            Godkänt
+-- Arv
+  Ny fil: mode och ägare                           Godkänt
+  Ny fil: revision effektivt r--                   Godkänt
+  Underkatalog: ärver setgid                       Godkänt
+  anna raderar egen fil                            Godkänt
+-- Befintlig användare
+  Befintlig användare: returkod                    Godkänt
+  Befintlig användare läggs i ekonomi              **UNDERKÄNT** (nej)
+-- Felhantering
+  trap rapporterar fel med radnummer               **UNDERKÄNT** (nej)
+
+=== gemini_lagad.sh (gemini_lagad.sh, katalogflagga --path) ===
+-- Dry-run och validering
+  Dry-run: returkod                                Godkänt
+  Dry-run: inget ändras på systemet                Godkänt
+  Validering: vägrar /etc                          **UNDERKÄNT** (nej)
+  Validering: vägrar /etc/ (avslutande snedstreck) **UNDERKÄNT** (nej)
+  Validering: vägrar /etc via '..'                 **UNDERKÄNT** (nej)
+  Validering: vägrar /tmp                          **UNDERKÄNT** (nej)
+  Validering: vägrar katalog under /usr            **UNDERKÄNT** (nej)
+  Validering: vägrar relativ sökväg                Godkänt
+  Validering: vägrar versaler i användarnamn       Godkänt
+  Validering: vägrar användarnamn > 32 tecken      **UNDERKÄNT** (nej)
+  Validering: vägrar ogiltigt gruppnamn            **UNDERKÄNT** (nej)
+  Tydligt fel vid flagga utan värde                **UNDERKÄNT** (nej)
+-- Körning 1
+  Körning 1: returkod                              Godkänt
+  Körning 1: användaren skapad                     Godkänt
+  Körning 1: lösenord satt                         Godkänt
+  Körning 1: lösenordsbyte krävs                   Godkänt
+  Körning 1: katalogen skapad                      Godkänt
+  Lösenord visas inte i omdirigerad utdata         **UNDERKÄNT** (nej)
+  Lösenord finns inte i loggfilen                  Godkänt
+-- Körning 2 (idempotens)
+  Körning 2: returkod                              Godkänt
+  Körning 2: lösenord satt                         Godkänt
+  Körning 2: lösenordsbyte krävs                   Godkänt
+-- Struktur
+  Katalog: mode                                    Godkänt
+  Katalog: ägare                                   Godkänt
+  ACL: revision r-x på katalogen                   Godkänt
+  Default-ACL: revision r-x                        Godkänt
+  Default-ACL: övriga ---                          Godkänt
+  anna i ekonomi (id)                              Godkänt
+  anna listad i getent group ekonomi               **UNDERKÄNT** (nej)
+  Loggfil inte läsbar för alla                     **UNDERKÄNT** (nej)
+-- Rättighetsmatris
+  anna skapar fil                                  Godkänt
+  anna skapar underkatalog                         Godkänt
+  kollega läser annas fil                          Godkänt
+  kollega skriver i annas fil                      Godkänt
+  kollega raderar annas fil                        Godkänt
+  revisor listar katalogen                         Godkänt
+  revisor läser fil                                Godkänt
+  revisor skapar fil                               Godkänt
+  revisor skriver i fil                            Godkänt
+  revisor raderar fil                              Godkänt
+  utomstående listar katalogen                     Godkänt
+  utomstående läser fil                            Godkänt
+-- Arv
+  Ny fil: mode och ägare                           Godkänt
+  Ny fil: revision effektivt r--                   Godkänt
+  Underkatalog: ärver setgid                       Godkänt
+  anna raderar egen fil                            Godkänt
+-- Befintlig användare
+  Befintlig användare: returkod                    Godkänt
+  Befintlig användare läggs i ekonomi              **UNDERKÄNT** (nej)
+-- Felhantering
+  trap rapporterar fel med radnummer               **UNDERKÄNT** (nej)
+
+=== Isolerat test: pipefail och head ===
+  tr -dc ... </dev/urandom | head -c 12:  rc=141 rc=141 rc=141 rc=141 rc=141 (141 = SIGPIPE)
+  head -c 9 /dev/urandom | base64:        rc=0 rc=0 rc=0 rc=0 rc=0 
+
+=== SAMMANFATTNING ===
+
+| Test | Förväntat | nyanvandare.sh | skapa_nyanvandare.sh | skapa_nyanvandare_fore_fix.sh | gemini_nyanvandare.sh | gemini_lagad.sh |
+|---|---|---|---|---|---|---|
+| Dry-run: returkod | 0 | Godkänt | Godkänt | Godkänt | **UNDERKÄNT** (141) | Godkänt |
+| Dry-run: inget ändras på systemet | nej | Godkänt | Godkänt | Godkänt | Godkänt | Godkänt |
+| Validering: vägrar /etc | ja | Godkänt | Godkänt | Godkänt | **UNDERKÄNT** (nej) | **UNDERKÄNT** (nej) |
+| Validering: vägrar /etc/ (avslutande snedstreck) | ja | Godkänt | Godkänt | **UNDERKÄNT** (nej) | **UNDERKÄNT** (nej) | **UNDERKÄNT** (nej) |
+| Validering: vägrar /etc via '..' | ja | Godkänt | Godkänt | **UNDERKÄNT** (nej) | **UNDERKÄNT** (nej) | **UNDERKÄNT** (nej) |
+| Validering: vägrar /tmp | ja | Godkänt | Godkänt | **UNDERKÄNT** (nej) | **UNDERKÄNT** (nej) | **UNDERKÄNT** (nej) |
+| Validering: vägrar katalog under /usr | ja | Godkänt | Godkänt | **UNDERKÄNT** (nej) | **UNDERKÄNT** (nej) | **UNDERKÄNT** (nej) |
+| Validering: vägrar relativ sökväg | ja | Godkänt | Godkänt | Godkänt | Godkänt | Godkänt |
+| Validering: vägrar versaler i användarnamn | ja | Godkänt | Godkänt | Godkänt | Godkänt | Godkänt |
+| Validering: vägrar användarnamn > 32 tecken | ja | Godkänt | Godkänt | Godkänt | **UNDERKÄNT** (nej) | **UNDERKÄNT** (nej) |
+| Validering: vägrar ogiltigt gruppnamn | ja | Godkänt | Godkänt | Godkänt | **UNDERKÄNT** (nej) | **UNDERKÄNT** (nej) |
+| Tydligt fel vid flagga utan värde | ja | Godkänt | Godkänt | Godkänt | **UNDERKÄNT** (nej) | **UNDERKÄNT** (nej) |
+| Körning 1: returkod | 0 | Godkänt | Godkänt | Godkänt | **UNDERKÄNT** (141) | Godkänt |
+| Körning 1: användaren skapad | ja | Godkänt | Godkänt | Godkänt | Godkänt | Godkänt |
+| Körning 1: lösenord satt | ja | Godkänt | Godkänt | Godkänt | **UNDERKÄNT** (nej) | Godkänt |
+| Körning 1: lösenordsbyte krävs | ja | Godkänt | Godkänt | Godkänt | **UNDERKÄNT** (nej) | Godkänt |
+| Körning 1: katalogen skapad | ja | Godkänt | Godkänt | Godkänt | **UNDERKÄNT** (nej) | Godkänt |
+| Lösenord visas inte i omdirigerad utdata | ja | Godkänt | **UNDERKÄNT** (nej) | **UNDERKÄNT** (nej) | Godkänt | **UNDERKÄNT** (nej) |
+| Lösenord finns inte i loggfilen | ja | Godkänt | Godkänt | Godkänt | Godkänt | Godkänt |
+| Körning 2: returkod | 0 | Godkänt | Godkänt | Godkänt | Godkänt | Godkänt |
+| Körning 2: lösenord satt | ja | Godkänt | Godkänt | Godkänt | **UNDERKÄNT** (nej) | Godkänt |
+| Körning 2: lösenordsbyte krävs | ja | Godkänt | Godkänt | Godkänt | **UNDERKÄNT** (nej) | Godkänt |
+| Katalog: mode | 3770 | Godkänt | Godkänt | Godkänt | Godkänt | Godkänt |
+| Katalog: ägare | root:ekonomi | Godkänt | Godkänt | Godkänt | Godkänt | Godkänt |
+| ACL: revision r-x på katalogen | ja | Godkänt | Godkänt | Godkänt | Godkänt | Godkänt |
+| Default-ACL: revision r-x | ja | Godkänt | Godkänt | Godkänt | Godkänt | Godkänt |
+| Default-ACL: övriga --- | ja | Godkänt | Godkänt | Godkänt | Godkänt | Godkänt |
+| anna i ekonomi (id) | ja | Godkänt | Godkänt | Godkänt | Godkänt | Godkänt |
+| anna listad i getent group ekonomi | ja | Godkänt | Godkänt | Godkänt | **UNDERKÄNT** (nej) | **UNDERKÄNT** (nej) |
+| Loggfil inte läsbar för alla | ja | Godkänt | Godkänt | Godkänt | **UNDERKÄNT** (nej) | **UNDERKÄNT** (nej) |
+| anna skapar fil | OK | Godkänt | Godkänt | Godkänt | Godkänt | Godkänt |
+| anna skapar underkatalog | OK | Godkänt | Godkänt | Godkänt | Godkänt | Godkänt |
+| kollega läser annas fil | OK | Godkänt | Godkänt | Godkänt | Godkänt | Godkänt |
+| kollega skriver i annas fil | OK | Godkänt | Godkänt | Godkänt | Godkänt | Godkänt |
+| kollega raderar annas fil | NEKAS | Godkänt | Godkänt | Godkänt | Godkänt | Godkänt |
+| revisor listar katalogen | OK | Godkänt | Godkänt | Godkänt | Godkänt | Godkänt |
+| revisor läser fil | OK | Godkänt | Godkänt | Godkänt | Godkänt | Godkänt |
+| revisor skapar fil | NEKAS | Godkänt | Godkänt | Godkänt | Godkänt | Godkänt |
+| revisor skriver i fil | NEKAS | Godkänt | Godkänt | Godkänt | Godkänt | Godkänt |
+| revisor raderar fil | NEKAS | Godkänt | Godkänt | Godkänt | Godkänt | Godkänt |
+| utomstående listar katalogen | NEKAS | Godkänt | Godkänt | Godkänt | Godkänt | Godkänt |
+| utomstående läser fil | NEKAS | Godkänt | Godkänt | Godkänt | Godkänt | Godkänt |
+| Ny fil: mode och ägare | 660 anna:ekonomi | Godkänt | Godkänt | Godkänt | Godkänt | Godkänt |
+| Ny fil: revision effektivt r-- | ja | Godkänt | Godkänt | Godkänt | Godkänt | Godkänt |
+| Underkatalog: ärver setgid | 2770 | Godkänt | Godkänt | Godkänt | Godkänt | Godkänt |
+| anna raderar egen fil | OK | Godkänt | Godkänt | Godkänt | Godkänt | Godkänt |
+| Befintlig användare: returkod | 0 | Godkänt | Godkänt | Godkänt | Godkänt | Godkänt |
+| Befintlig användare läggs i ekonomi | ja | Godkänt | Godkänt | Godkänt | **UNDERKÄNT** (nej) | **UNDERKÄNT** (nej) |
+| trap rapporterar fel med radnummer | ja | Godkänt | Godkänt | Godkänt | **UNDERKÄNT** (nej) | **UNDERKÄNT** (nej) |
+
+nyanvandare.sh: 49 av 49 godkända
+skapa_nyanvandare.sh: 48 av 49 godkända
+skapa_nyanvandare_fore_fix.sh: 44 av 49 godkända
+gemini_nyanvandare.sh: 30 av 49 godkända
+gemini_lagad.sh: 36 av 49 godkända

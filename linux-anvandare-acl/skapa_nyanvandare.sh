@@ -89,6 +89,7 @@ logga_resultat() {
 # ---------------------------------------------------------------------------
 # ERR-trap: rapportera rad, kommando och exit-kod vid oväntat fel.
 # ---------------------------------------------------------------------------
+# shellcheck disable=SC2317  # anropas indirekt via trap
 vid_fel() {
   local rc=$?
   logga "FEL: kommandot '${BASH_COMMAND}' misslyckades på rad ${BASH_LINENO[0]} (exit ${rc})"
@@ -126,7 +127,7 @@ giltigt_namn() {
 }
 
 validera_indata() {
-  local namn farlig
+  local namn
   for namn in "${ANVANDARE}" "${GRUPP}" "${REVGRUPP}"; do
     if [[ -z "${namn}" ]] || ! giltigt_namn "${namn}"; then
       printf 'Fel: ogiltigt användar-/gruppnamn: %q\n' "${namn}" >&2
@@ -139,13 +140,18 @@ validera_indata() {
     exit "${E_VALIDERING}"
   fi
 
-  # Vägra känsliga systemkataloger (skydd mot fatala misstag)
-  for farlig in / /bin /boot /dev /etc /home /lib /lib64 /proc /root /run /sbin /sys /usr /var /var/log; do
-    if [[ "${KATALOG}" == "${farlig}" ]]; then
+  # Normalisera sökvägen: tar bort avslutande snedstreck och löser upp .. och
+  # symlänkar, så att till exempel /etc/ och /srv/x/../../etc inte slinker igenom
+  KATALOG="$(realpath -m -- "${KATALOG}")"
+
+  # Vägra känsliga systemkataloger OCH allt under dem (skydd mot fatala misstag)
+  case "${KATALOG}" in
+    /|/bin|/boot|/dev|/etc|/home|/lib|/lib64|/opt|/proc|/root|/run|/sbin|/srv|/sys|/tmp|/usr|/var|\
+    /bin/*|/boot/*|/dev/*|/etc/*|/lib/*|/lib64/*|/proc/*|/root/*|/run/*|/sbin/*|/sys/*|/usr/*|/var/*)
       printf 'Fel: vägrar operera på skyddad systemkatalog: %q\n' "${KATALOG}" >&2
       exit "${E_VALIDERING}"
-    fi
-  done
+      ;;
+  esac
 }
 
 # ---------------------------------------------------------------------------
