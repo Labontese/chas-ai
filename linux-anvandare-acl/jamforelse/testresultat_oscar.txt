@@ -1,0 +1,62 @@
+Testsvit startad 2026-09-16 11:57:42 mot oscar_skapa_anvandare.sh
+-- Grundfunktion (anna, Ekonomi, Medarbetare)
+  Körning: returkod                                        Godkänt
+  Användaren skapad                                        Godkänt
+  Fullständigt namn sparat                                 Godkänt
+  Skal                                                     Godkänt
+  Tilläggsgrupp ekonomi (id)                               Godkänt
+  Listad i getent group ekonomi                            Godkänt
+  Privata mappar: finns, 700, ägs av anna                  Godkänt
+  VÄLKOMMEN.txt: mode                                      Godkänt
+  Utskrift: nya användaren listas inte som 'annan'         **UNDERKÄNT** (nej)
+-- Lösenord
+  Lösenord satt (kan logga in)                             **UNDERKÄNT** (nej)
+  Lösenordsbyte krävs                                      **UNDERKÄNT** (nej)
+-- Sekretess i hemkatalogen
+  Kollega listar annas hemkatalog                          **UNDERKÄNT** (OK)
+  Kollega läser fil i hemkatalogens rot                    **UNDERKÄNT** (OK)
+  Kollega läser .bashrc                                    **UNDERKÄNT** (OK)
+  Kollega läser Dokument/cv.txt                            Godkänt
+  Kollega läser VÄLKOMMEN.txt                              Godkänt
+  Utomstående listar annas hemkatalog                      Godkänt
+  Anna skriver i Dokument                                  Godkänt
+-- Felfall och validering
+  Befintlig användare avvisas                              Godkänt
+  Ogiltig avdelning: avbryter utan ändringar               Godkänt
+  Ogiltig roll: avbryter utan ändringar                    Godkänt
+  Versaler i användarnamn avvisas                          **UNDERKÄNT** (nej)
+  Misslyckad useradd lämnar ingen grupp kvar               **UNDERKÄNT** (nej)
+  Backslash i namn bevaras                                 **UNDERKÄNT** (PerOlsson)
+  Icke-root avvisas                                        Godkänt
+
+=== SAMMANFATTNING ===
+
+| Test | Förväntat | oscar_skapa_anvandare.sh |
+|---|---|---|
+| Körning: returkod | 0 | Godkänt |
+| Användaren skapad | ja | Godkänt |
+| Fullständigt namn sparat | Anna Andersson | Godkänt |
+| Skal | /bin/bash | Godkänt |
+| Tilläggsgrupp ekonomi (id) | ja | Godkänt |
+| Listad i getent group ekonomi | ja | Godkänt |
+| Privata mappar: finns, 700, ägs av anna | ja | Godkänt |
+| VÄLKOMMEN.txt: mode | 600 | Godkänt |
+| Utskrift: nya användaren listas inte som 'annan' | ja | **UNDERKÄNT** (nej) |
+| Lösenord satt (kan logga in) | ja | **UNDERKÄNT** (nej) |
+| Lösenordsbyte krävs | ja | **UNDERKÄNT** (nej) |
+| Kollega listar annas hemkatalog | NEKAS | **UNDERKÄNT** (OK) |
+| Kollega läser fil i hemkatalogens rot | NEKAS | **UNDERKÄNT** (OK) |
+| Kollega läser .bashrc | NEKAS | **UNDERKÄNT** (OK) |
+| Kollega läser Dokument/cv.txt | NEKAS | Godkänt |
+| Kollega läser VÄLKOMMEN.txt | NEKAS | Godkänt |
+| Utomstående listar annas hemkatalog | NEKAS | Godkänt |
+| Anna skriver i Dokument | OK | Godkänt |
+| Befintlig användare avvisas | ja | Godkänt |
+| Ogiltig avdelning: avbryter utan ändringar | ja | Godkänt |
+| Ogiltig roll: avbryter utan ändringar | ja | Godkänt |
+| Versaler i användarnamn avvisas | ja | **UNDERKÄNT** (nej) |
+| Misslyckad useradd lämnar ingen grupp kvar | ja | **UNDERKÄNT** (nej) |
+| Backslash i namn bevaras | Per\Olsson | **UNDERKÄNT** (PerOlsson) |
+| Icke-root avvisas | ja | Godkänt |
+
+oscar_skapa_anvandare.sh: 16 av 25 godkända

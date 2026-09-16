@@ -1,10 +1,13 @@
 # Jämförelse och testning: användare, grupp och delad katalog med ACL
 
-Studiematerial för YH-utbildningen IT-infrastrukturspecialist (ISCX26, Chas Academy). Dokumentet innehåller prompterna, skriptet `nyanvandare.sh` med förklaring av rättighetsmodellen, testplan, rollback, förberedelse inför muntlig validering samt en testad jämförelse mellan tre skript:
+Studiematerial för YH-utbildningen IT-infrastrukturspecialist (ISCX26, Chas Academy). Dokumentet innehåller prompterna, skriptet `nyanvandare.sh` med förklaring av rättighetsmodellen, testplan, rollback, förberedelse inför muntlig validering samt en testad jämförelse mellan tre skript, plus Oscars interaktiva variant:
 
 - [`nyanvandare.sh`](nyanvandare.sh), skrivet av Claude utifrån den första avancerade prompten
 - [`../skapa_nyanvandare.sh`](../skapa_nyanvandare.sh), genererat utifrån den härdade prompten i [`../PROMPT.md`](../PROMPT.md)
 - [`gemini_nyanvandare.sh`](gemini_nyanvandare.sh), skrivet av Gemini
+- [`oscar_skapa_anvandare.sh`](oscar_skapa_anvandare.sh), Oscars variant, som tolkar uppgiften annorlunda och testas med en egen svit (avsnitt 9)
+
+Avsnitt 10 är ett färdigt underlag för redovisningen.
 
 Allt är testat i Ubuntu 24.04 LTS (september 2026). Testmiljön saknade `sudo`, så rättighetstesterna kördes med `runuser -u`, som ger samma resultat som `sudo -u`.
 
@@ -20,6 +23,10 @@ Allt är testat i Ubuntu 24.04 LTS (september 2026). Testmiljön saknade `sudo`,
 | [`testresultat.txt`](testresultat.txt) | Fullständig utskrift från testkörningen (bilaga C) |
 | [`../skapa_nyanvandare.sh`](../skapa_nyanvandare.sh) | Skriptet från den härdade prompten |
 | [`../PROMPT.md`](../PROMPT.md) | Den härdade prompten |
+| [`oscar_skapa_anvandare.sh`](oscar_skapa_anvandare.sh) | Oscars variant, oförändrad (bilaga D) |
+| [`oscar_lagad.sh`](oscar_lagad.sh) | Oscars variant med sex lagningar (avsnitt 9) |
+| [`testa_oscar.sh`](testa_oscar.sh) | Testsvit för Oscars interaktiva skript (bilaga E) |
+| [`testresultat_oscar.txt`](testresultat_oscar.txt) | Utskrift från testkörningen av Oscars skript (bilaga F) |
 
 ## Innehåll
 
@@ -31,9 +38,14 @@ Allt är testat i Ubuntu 24.04 LTS (september 2026). Testmiljön saknade `sudo`,
 6. Rollback
 7. Frågor vid muntlig validering
 8. Jämförelse och testresultat
-9. Bilaga A: Gemini-skriptet
-10. Bilaga B: Testsviten `jamfor_skript.sh`
-11. Bilaga C: Fullständig testutskrift
+9. Oscars variant
+10. Underlag för redovisning
+11. Bilaga A: Gemini-skriptet
+12. Bilaga B: Testsviten `jamfor_skript.sh`
+13. Bilaga C: Fullständig testutskrift
+14. Bilaga D: Oscars skript
+15. Bilaga E: Testsviten `testa_oscar.sh`
+16. Bilaga F: Testutskrift för Oscars skript
 
 ---
 
@@ -142,6 +154,36 @@ Anpassa materialet till repot (där `PROMPT.md` och `skapa_nyanvandare.sh` redan
 ```text
 https://github.com/Labontese/chas-ai
 ```
+
+Redovisningskraven (avsnitt 10):
+
+```text
+* Redovisning:
+   * Varje grupp visar sina två prompts och förklarar skillnaden i utdata.
+   * De visar upp ett konkret exempel på där AI:n hallucinerade eller där de behövde dubbelkolla ett kommandos flaggor manuellt.
+```
+
+Oscars variant (avsnitt 9, skriptet bifogades):
+
+```text
+lägg även in Oscars variant
+```
+
+Lägg in allt i repot:
+
+```text
+lägg up till git
+```
+
+### 1.6 Oscars prompt
+
+Fyll i Oscars prompt och vilket AI-verktyg han använde, så att redovisningen kan visa den bredvid de andra prompterna.
+
+```text
+[Klistra in Oscars prompt här]
+```
+
+AI-verktyg: [fyll i]
 
 ---
 
@@ -726,7 +768,7 @@ Alla skript kördes med samma testsvit (49 tester) i Ubuntu 24.04.4 LTS den 16 s
 | `gemini_nyanvandare.sh` (Gemini, original) | 30 av 49 |
 | `gemini_lagad.sh` (Gemini, bara lösenordsraden lagad) | 36 av 49 |
 
-Hela tabellen finns under "Testsviten" längre ned.
+Hela tabellen finns under "Testsviten" längre ned. Oscars variant löser uppgiften på ett annat sätt och har en egen testsvit med 25 tester (avsnitt 9): **16 av 25** i original och **25 av 25** efter sex lagningar.
 
 ### 8.1 `skapa_nyanvandare.sh` (härdad prompt)
 
@@ -951,7 +993,338 @@ En andra lärdom: en lista med exakta katalognamn är ett svagt skydd. Normalise
 
 ---
 
-## 9. Bilaga A: Gemini-skriptet
+## 9. Oscars variant
+
+Oscars skript (bilaga D) tolkar uppgiften annorlunda än de andra. I stället för en delad avdelningskatalog med ACL skapar det en användare via interaktiva menyer (avdelning och roll), lägger användaren i avdelningsgruppen och skapar fyra privata mappar i hemkatalogen plus en välkomstfil.
+
+Skriptet har inga flaggor och kan därför inte köras med `jamfor_skript.sh`. Det har i stället en egen svit, [`testa_oscar.sh`](testa_oscar.sh) (bilaga E), som matar in svaren via stdin. Siffrorna är inte direkt jämförbara med de 49 testerna i avsnitt 8.
+
+### 9.1 Tolkningen av uppgiften
+
+"Sätt rättighetsstrukturer för en ny katalog" går att läsa på flera sätt. Claude och Gemini fick en detaljerad prompt som bestämde tolkningen (delad katalog, setgid, sticky bit, ACL). Oscars variant visar hur olika resultatet blir när uppgiften inte är preciserad: skriptet fokuserar på privata mappar och användarvänlighet i stället för delad åtkomst.
+
+### 9.2 Det som är bra
+
+- Lätt att läsa, med tydliga numrerade kommentarer.
+- Användarvänligt: menyer, välkomstfil och en tydlig sammanfattning.
+- Root kontrolleras först.
+- Ogiltiga menyval avbryter **innan** något ändras på systemet.
+- En befintlig användare avvisas i stället för att skrivas över.
+- Fullständigt namn sparas i kommentarfältet (`-c`), vilket de andra skripten saknar.
+- Rätt val av `useradd -G` (tilläggsgrupp), till skillnad från Gemini som valde `-g`.
+- Felkoden från `useradd` kontrolleras.
+- De privata mapparna är korrekt skyddade med 700.
+
+### 9.3 Fynd, bekräftade i testerna
+
+**1. Kontot går inte att logga in med.** Skriptet sätter aldrig något lösenord, så kontot är låst (`passwd -S anna` visar `L`, och `/etc/shadow` innehåller `!`).
+
+**2. Hela avdelningen kan läsa i hemkatalogen.** Raden
+
+```bash
+chown -R "$USERNAME:$DEPARTMENT" "$USER_HOME"
+```
+
+ger hemkatalogen gruppen `ekonomi`. Ubuntu 24.04 skapar hemkataloger med mode 750 (`HOME_MODE` i `/etc/login.defs`), så alla i avdelningen får läs- och inträdesrätt. I testet kunde en kollega lista Annas hemkatalog och läsa `anteckningar.txt` som Anna skapat där. Mapparna med 700 och `VÄLKOMMEN.txt` med 600 var däremot skyddade. En vanlig hemkatalog har användarens egen grupp (`kollega:kollega` i testet) och är därför stängd för andra.
+
+Det här är ett bra exempel för redovisningen: raden ser helt rimlig ut, och välkomstfilen säger att mapparna är privata, men rättighetsmodellen öppnar ändå hemkatalogen för hela avdelningen.
+
+**3. Den nya användaren listas som "annan användare".** `getent group ekonomi` innehåller alltid den nya användaren själv, så grenen "Inga andra användare finns ännu" körs aldrig.
+
+**4. Ingen validering av användarnamn.** `Erik` med versal godkändes, eftersom `useradd` på Ubuntu 24.04 tillåter versaler (det är `adduser` som stoppar dem).
+
+**5. Rester vid fel.** Avdelningsgruppen skapas innan `useradd` körs. När `useradd` misslyckas (till exempel med kolon i det fullständiga namnet) ligger gruppen kvar.
+
+**6. `read` utan `-r`.** `Per\Olsson` sparades som `PerOlsson`. `shellcheck` varnar för detta (SC2162).
+
+**Övrigt, inte testat som fel:**
+
+- Rollen påverkar inga rättigheter. En "Administratör" eller "Chef" får exakt samma behörighet som en "Medarbetare"; rollen skrivs bara i välkomstfilen.
+- Funktionen `paus` definieras men används aldrig.
+- `clear` skriver `TERM environment variable not set.` när skriptet körs utan terminal.
+- Skriptet är interaktivt och kan därför inte användas i automatisering utan att svaren matas in via stdin.
+- Ingen loggning och ingen dry-run.
+
+### 9.4 Testresultat
+
+| Test | Förväntat | oscar_skapa_anvandare.sh |
+|---|---|---|
+| Körning: returkod | 0 | Godkänt |
+| Användaren skapad | ja | Godkänt |
+| Fullständigt namn sparat | Anna Andersson | Godkänt |
+| Skal | /bin/bash | Godkänt |
+| Tilläggsgrupp ekonomi (id) | ja | Godkänt |
+| Listad i getent group ekonomi | ja | Godkänt |
+| Privata mappar: finns, 700, ägs av anna | ja | Godkänt |
+| VÄLKOMMEN.txt: mode | 600 | Godkänt |
+| Utskrift: nya användaren listas inte som 'annan' | ja | **UNDERKÄNT** (nej) |
+| Lösenord satt (kan logga in) | ja | **UNDERKÄNT** (nej) |
+| Lösenordsbyte krävs | ja | **UNDERKÄNT** (nej) |
+| Kollega listar annas hemkatalog | NEKAS | **UNDERKÄNT** (OK) |
+| Kollega läser fil i hemkatalogens rot | NEKAS | **UNDERKÄNT** (OK) |
+| Kollega läser .bashrc | NEKAS | **UNDERKÄNT** (OK) |
+| Kollega läser Dokument/cv.txt | NEKAS | Godkänt |
+| Kollega läser VÄLKOMMEN.txt | NEKAS | Godkänt |
+| Utomstående listar annas hemkatalog | NEKAS | Godkänt |
+| Anna skriver i Dokument | OK | Godkänt |
+| Befintlig användare avvisas | ja | Godkänt |
+| Ogiltig avdelning: avbryter utan ändringar | ja | Godkänt |
+| Ogiltig roll: avbryter utan ändringar | ja | Godkänt |
+| Versaler i användarnamn avvisas | ja | **UNDERKÄNT** (nej) |
+| Misslyckad useradd lämnar ingen grupp kvar | ja | **UNDERKÄNT** (nej) |
+| Backslash i namn bevaras | Per\Olsson | **UNDERKÄNT** (PerOlsson) |
+| Icke-root avvisas | ja | Godkänt |
+
+oscar_skapa_anvandare.sh: 16 av 25 godkända
+
+### 9.5 Lagningar
+
+Sex ändringar räcker för att få **25 av 25**. Samma testsvit kördes mot [`oscar_lagad.sh`](oscar_lagad.sh).
+
+| Fynd | Lagning |
+|---|---|
+| Inget lösenord | Slumpat lösenord via `chpasswd`, `chage -d 0`, lösenordet visas i sammanfattningen |
+| Hemkatalogen öppen för avdelningen | `chown -R "$USERNAME:"` (tomt efter kolon ger användarens egen grupp) |
+| Användaren listas som "annan" | `grep -vx "$USERNAME"` filtrerar bort den nya användaren |
+| Ingen validering | Regex för användarnamn direkt efter inmatningen |
+| Grupp kvar vid fel | Flaggan `GRUPP_SKAPAD` och `groupdel` om `useradd` misslyckas |
+| Backslash försvinner | `read -r` |
+
+```diff
+--- oscar_skapa_anvandare.sh
++++ oscar_lagad.sh
+@@ -22,7 +22,7 @@
+ # ----------------------------------------------------------
+ 
+ paus() {
+-    read -p "Tryck Enter för att fortsätta..."
++    read -r -p "Tryck Enter för att fortsätta..."
+ }
+ 
+ 
+@@ -37,8 +37,13 @@
+ echo "=============================================="
+ echo
+ 
+-read -p "Ange användarnamn: " USERNAME
+-read -p "Ange användarens fullständiga namn: " FULLNAME
++read -r -p "Ange användarnamn: " USERNAME
++read -r -p "Ange användarens fullständiga namn: " FULLNAME
++
++if [[ ! "$USERNAME" =~ ^[a-z_][a-z0-9_-]{0,31}$ ]]; then
++    echo "Fel: Ogiltigt användarnamn. Använd små bokstäver, siffror, _ och -, max 32 tecken."
++    exit 1
++fi
+ 
+ 
+ # ----------------------------------------------------------
+@@ -64,7 +69,7 @@
+ echo "4) Produktion"
+ echo
+ 
+-read -p "Ditt val: " DEPARTMENT_CHOICE
++read -r -p "Ditt val: " DEPARTMENT_CHOICE
+ 
+ case "$DEPARTMENT_CHOICE" in
+     1)
+@@ -102,7 +107,7 @@
+ echo "4) Tekniker"
+ echo
+ 
+-read -p "Ditt val: " ROLE_CHOICE
++read -r -p "Ditt val: " ROLE_CHOICE
+ 
+ case "$ROLE_CHOICE" in
+     1)
+@@ -128,8 +133,10 @@
+ # 7. Skapa avdelningsgruppen om den inte finns
+ # ----------------------------------------------------------
+ 
++GRUPP_SKAPAD=0
+ if ! getent group "$DEPARTMENT" > /dev/null; then
+     groupadd "$DEPARTMENT"
++    GRUPP_SKAPAD=1
+     echo "Gruppen '$DEPARTMENT' skapades."
+ else
+     echo "Gruppen '$DEPARTMENT' finns redan."
+@@ -149,10 +156,16 @@
+ 
+ if [ $? -ne 0 ]; then
+     echo "Fel: Kunde inte skapa användaren."
++    [ "$GRUPP_SKAPAD" -eq 1 ] && groupdel "$DEPARTMENT"
+     exit 1
+ fi
+ 
+ 
++TEMP_PASS=$(head -c 12 /dev/urandom | base64)
++printf '%s:%s\n' "$USERNAME" "$TEMP_PASS" | chpasswd
++chage -d 0 "$USERNAME"
++
++
+ # ----------------------------------------------------------
+ # 9. Skapa privata mappar
+ # ----------------------------------------------------------
+@@ -169,7 +182,7 @@
+ # 10. Ge användaren ägarskap över mapparna
+ # ----------------------------------------------------------
+ 
+-chown -R "$USERNAME:$DEPARTMENT" "$USER_HOME"
++chown -R "$USERNAME:" "$USER_HOME"
+ 
+ 
+ # ----------------------------------------------------------
+@@ -223,7 +236,7 @@
+ # 13. Ändra ägare på välkomstfilen
+ # ----------------------------------------------------------
+ 
+-chown "$USERNAME:$DEPARTMENT" "$USER_HOME/VÄLKOMMEN.txt"
++chown "$USERNAME:" "$USER_HOME/VÄLKOMMEN.txt"
+ 
+ chmod 600 "$USER_HOME/VÄLKOMMEN.txt"
+ 
+@@ -232,7 +245,7 @@
+ # 14. Hitta andra användare på samma avdelning
+ # ----------------------------------------------------------
+ 
+-OTHER_USERS=$(getent group "$DEPARTMENT" | cut -d: -f4)
++OTHER_USERS=$(getent group "$DEPARTMENT" | cut -d: -f4 | tr ',' '\n' | grep -vx "$USERNAME")
+ 
+ 
+ # ----------------------------------------------------------
+@@ -249,6 +262,8 @@
+ echo "Avdelning  : $DEPARTMENT_NAME"
+ echo "Roll       : $ROLE"
+ echo
++echo "Tillfälligt lösenord: $TEMP_PASS (måste bytas vid första inloggning)"
++echo
+ echo "Privata mappar:"
+ echo "  /home/$USERNAME/Dokument"
+ echo "  /home/$USERNAME/Bilder"
+@@ -262,7 +277,7 @@
+ if [ -z "$OTHER_USERS" ]; then
+     echo "Inga andra användare finns ännu."
+ else
+-    echo "$OTHER_USERS" | tr ',' '\n'
++    echo "$OTHER_USERS"
+ fi
+ 
+ echo
+```
+
+### 9.6 Jämförelse av alla fyra
+
+| Egenskap | Claude (`nyanvandare.sh`) | Härdad prompt (`skapa_nyanvandare.sh`) | Gemini | Oscar |
+|---|---|---|---|---|
+| Delad avdelningskatalog | Ja | Ja | Ja | Nej |
+| Setgid och sticky bit | Ja | Ja | Ja | Nej |
+| ACL för läsgrupp | Ja | Ja | Ja | Nej |
+| Privata mappar i hemkatalogen | Nej | Nej | Nej | Ja |
+| Hemkatalogen stängd för andra | Ja | Ja | Ja | Nej |
+| Lösenord och tvingat byte | Ja | Ja | Nej (kraschar) | Nej (saknas) |
+| Fullständigt namn sparas | Nej | Nej | Nej | Ja |
+| Tilläggsgrupp | Ja (`-G`) | Ja (`usermod -aG`) | Nej (`-g`) | Ja (`-G`) |
+| Indata | Argument | Argument | Argument | Interaktiva menyer |
+| Validering av användarnamn | Ja | Ja | Delvis | Nej |
+| Skydd mot systemkataloger | Ja | Ja | Nej | Ej relevant (fast sökväg) |
+| Dry-run | Ja | Ja, även utan root | Ja, men kraschar | Nej |
+| Loggning | Ja | Ja | Delvis | Nej |
+| Omkörning | Idempotent | Idempotent | Delvis | Avbryter om användaren finns |
+| Felhantering | `set -Eeuo pipefail` och `trap` | `set -Eeuo pipefail` och `trap` | `trap` som aldrig triggas | Kontroll efter `useradd` |
+| Användarvänlighet | Hjälptext | Hjälptext och sammanfattning | Hjälptext | Menyer, välkomstfil |
+| Testresultat | 49 av 49 | 48 av 49 | 30 av 49 | 16 av 25 (egen svit) |
+| Efter minsta lagning | | | 36 av 49 | 25 av 25 |
+
+Ingen av varianterna är bäst på allt. Skripten från Claude och den härdade prompten är säkrast och går att automatisera, Oscars är mest användarvänligt och det enda som sparar det fullständiga namnet, och Gemini har samma struktur som Claude men med fel som gör att det inte fungerar.
+
+### 9.7 Så kör du testerna
+
+Kör endast i en test-VM, eftersom sviten skapar och tar bort användare och grupperna administration, it, ekonomi och produktion.
+
+```bash
+cd linux-anvandare-acl/jamforelse
+sudo bash testa_oscar.sh oscar_skapa_anvandare.sh | tee testresultat_oscar.txt
+sudo bash testa_oscar.sh oscar_lagad.sh
+```
+
+---
+
+## 10. Underlag för redovisning
+
+Redovisningskraven: visa två prompts och förklara skillnaden i utdata, och visa ett konkret exempel där AI:n hallucinerade eller där ett kommandos flaggor behövde dubbelkollas manuellt.
+
+### 10.1 Två prompts och skillnaden i utdata
+
+Det finns två naturliga par att visa, beroende på vad gruppen vill betona:
+
+- **Uppgiften (1.1) mot den avancerade prompten (1.3):** hur mycket en detaljerad prompt styr resultatet.
+- **Den avancerade prompten (1.3) mot den härdade prompten (1.4, [`../PROMPT.md`](../PROMPT.md)):** hur man skärper en prompt utifrån fel som testerna hittat.
+
+Det här syns i utdatan:
+
+- **Prompten styr utdatan.** Claude och Gemini fick den avancerade prompten och gav nästan identisk struktur: samma standardvärden, loggfil, dry-run, funktioner och 3770 med ACL. Oscars variant, som inte bygger på den prompten, blev ett helt annat skript med menyer och privata mappar.
+- **Prompten styr även felen.** Den avancerade prompten krävde `set -euo pipefail`. Gemini kopierade det rakt av, och därför fungerar dess `trap` aldrig inuti funktioner. Claude lade till `-E` och förklarade varför. Den härdade prompten kräver `-E` uttryckligen. En brist i prompten gick alltså rakt in i koden hos den AI som följde den bokstavligt.
+- **Mätbar skillnad:** med samma 49 tester fick Claude 49, den härdade prompten 48 och Gemini 30. Oscars variant fick 16 av 25 i en egen svit, eftersom den löser en annan tolkning av uppgiften.
+
+Om Oscars prompt fylls i under avsnitt 1.6 kan den också användas i jämförelsen.
+
+### 10.2 Exempel 1: kod som ser rätt ut men aldrig fungerar
+
+Gemini skrev följande och kommenterade att lösenordet var säkert:
+
+```bash
+temp_pass=$(tr -dc 'A-Za-z0-9!@#$%' < /dev/urandom | head -c 12)
+```
+
+Tillsammans med `pipefail` kraschar raden varje gång med kod 141 (SIGPIPE). Resultatet blir ett konto utan lösenord, och andra körningen rapporterar ändå att allt gick bra. Livedemo på tio sekunder:
+
+```bash
+bash -c 'set -euo pipefail; x=$(tr -dc A-Za-z0-9 </dev/urandom | head -c 12); echo ok'; echo "rc=$?"
+# rc=141, "ok" skrivs aldrig ut
+
+bash -c 'set -euo pipefail; x=$(head -c 9 /dev/urandom | base64); echo ok'; echo "rc=$?"
+# ok, rc=0
+```
+
+Strikt taget är det inget påhittat kommando, utan ett självsäkert påstående om beteende som inte stämmer. Samma sak gäller Geminis kommentar om att `trap` rapporterar fel på en specifik rad: den triggas aldrig.
+
+### 10.3 Exempel 2: en rimlig men felaktig förklaring
+
+Kommentaren i `skapa_nyanvandare.sh` och `PROMPT.md` säger att `rX` i default-ACL:n gör att framtida filer förblir `r--`. I praktiken löses `X` upp mot katalogen redan när `setfacl` körs och lagras som `r-x`, vilket syns i `getfacl`. Att nya filer ändå blir `r--` beror på ACL-masken (avsnitt 8.1). Resultatet stämmer, men förklaringen är fel, och det är precis den sortens fel som avslöjas vid en muntlig validering.
+
+### 10.4 Exempel 3: flaggor som behövde dubbelkollas
+
+| Flagga | Vad den faktiskt gör | Hur det kontrollerades |
+|---|---|---|
+| `useradd -g` / `-G` | `-g` sätter primärgrupp, `-G` tilläggsgrupp. Gemini valde `-g`, så Anna syntes inte i `getent group ekonomi` | `man useradd`, `id anna`, `getent group ekonomi` |
+| `set -E` | Krävs för att ERR-trapen ska ärvas av funktioner | `man bash` (errtrace), test med `false` |
+| `setfacl -d` / `rX` | `-d` sätter default-ACL. Stort `X` löses upp mot målet när kommandot körs | `man setfacl`, `getfacl` och `getfacl -e` på en ny fil |
+| `chage -d 0` | Tvingar lösenordsbyte vid nästa inloggning | `chage -l anna` |
+| `chown user:grupp` / `user:` | Grupp efter kolon sätts på allt; tomt efter kolon ger användarens egen grupp. Oscars `-R` med avdelningsgrupp öppnade hemkatalogen | `man chown`, `ls -la /home/anna`, åtkomsttest som kollega |
+| `read -r` | Utan `-r` tolkas backslash som specialtecken och försvinner | `shellcheck` (SC2162), test med `Per\Olsson` |
+| `useradd` och versaler | Ubuntu 24.04:s `useradd` godkänner `Erik`; det är `adduser` som stoppar versaler | Test i VM |
+| `realpath -m` | Normaliserar `/etc/` och `/srv/x/../../etc` till `/etc` även om sökvägen inte finns | `man realpath`, valideringstesterna i avsnitt 8.3 |
+
+### 10.5 Exempel 4: AI-genererade skript och tester behövde också rättas
+
+- Sökvägsskyddet i både `nyanvandare.sh` och `skapa_nyanvandare.sh` jämförde bara mot exakta namn och släppte igenom bland annat `/etc/`, `/tmp` och `/usr/local`. Det upptäcktes först när testsviten utökades (avsnitt 8.1).
+- README:n för `skapa_nyanvandare.sh` påstod att skriptet var shellcheck-rent, men shellcheck 0.9.0 gav SC2317.
+- I Claudes första skript skapades loggfilen med rättigheterna 644 innan skyddet hann köras. Det hittades vid testkörningen.
+- Den första testsviten godkände felaktigt Geminis validering, eftersom kraschen med kod 141 tolkades som att skriptet vägrade. Felet upptäcktes för att resultatet såg för bra ut, och kriteriet fick skärpas.
+
+Lärdomen är inte att en AI har rätt och en annan fel, utan att all AI-kod måste testas, även testerna och dokumentationen.
+
+### 10.6 Förslag på upplägg (cirka 7 minuter)
+
+1. Uppgiften och de två prompterna (1,5 min)
+2. Skillnaden i utdata: Claude och Gemini mot Oscar, och att felen följde med prompten (1,5 min)
+3. Livedemo av kod 141 (1 min)
+4. Flaggtabellen, med `-g`/`-G` och Oscars `chown -R` som huvudexempel (1,5 min)
+5. Resultat: 49, 48 och 30 av 49, Oscar 16 av 25 i egen svit, samt att även tester och dokumentation hade fel (1 min)
+6. Lärdom: verifiera med `man`, testa i en VM, lita inte på kommentarer (0,5 min)
+
+---
+
+## 11. Bilaga A: Gemini-skriptet
 
 [`gemini_nyanvandare.sh`](gemini_nyanvandare.sh), oförändrat som det såg ut när jämförelsen gjordes. **Kör det inte utan lagningarna i avsnitt 8.2.**
 
@@ -1151,7 +1524,7 @@ main "$@"
 
 ---
 
-## 10. Bilaga B: Testsviten `jamfor_skript.sh`
+## 12. Bilaga B: Testsviten `jamfor_skript.sh`
 
 Passerar `shellcheck` utan anmärkningar.
 
@@ -1556,7 +1929,7 @@ skriv_sammanfattning
 
 ---
 
-## 11. Bilaga C: Fullständig testutskrift
+## 13. Bilaga C: Fullständig testutskrift
 
 Utskriften från [`testresultat.txt`](testresultat.txt). I terminalen visas `**UNDERKÄNT**` med asterisker eftersom sammanfattningen är skriven som Markdown.
 
@@ -1921,4 +2294,592 @@ skapa_nyanvandare.sh: 48 av 49 godkända
 skapa_nyanvandare_fore_fix.sh: 44 av 49 godkända
 gemini_nyanvandare.sh: 30 av 49 godkända
 gemini_lagad.sh: 36 av 49 godkända
+```
+
+---
+
+## 14. Bilaga D: Oscars skript
+
+[`oscar_skapa_anvandare.sh`](oscar_skapa_anvandare.sh), oförändrat.
+
+```bash
+#!/bin/bash
+
+# ==========================================================
+# Användarskapare
+# Skapar användare, avdelning, roll och privata mappar
+# ==========================================================
+
+# ----------------------------------------------------------
+# 1. Kontrollera att scriptet körs som root
+# ----------------------------------------------------------
+
+if [ "$EUID" -ne 0 ]; then
+    echo "Fel: Scriptet måste köras som root."
+    echo "Kör exempelvis:"
+    echo "sudo ./skapa_anvandare.sh"
+    exit 1
+fi
+
+
+# ----------------------------------------------------------
+# 2. Funktion för att pausa
+# ----------------------------------------------------------
+
+paus() {
+    read -p "Tryck Enter för att fortsätta..."
+}
+
+
+# ----------------------------------------------------------
+# 3. Fråga efter användarens information
+# ----------------------------------------------------------
+
+clear
+
+echo "=============================================="
+echo "        VÄLKOMMEN TILL ANVÄNDARSKAPAREN"
+echo "=============================================="
+echo
+
+read -p "Ange användarnamn: " USERNAME
+read -p "Ange användarens fullständiga namn: " FULLNAME
+
+
+# ----------------------------------------------------------
+# 4. Kontrollera om användaren redan finns
+# ----------------------------------------------------------
+
+if id "$USERNAME" &>/dev/null; then
+    echo
+    echo "Fel: Användaren '$USERNAME' finns redan."
+    exit 1
+fi
+
+
+# ----------------------------------------------------------
+# 5. Välj avdelning
+# ----------------------------------------------------------
+
+echo
+echo "Välj avdelning:"
+echo "1) Administration"
+echo "2) IT"
+echo "3) Ekonomi"
+echo "4) Produktion"
+echo
+
+read -p "Ditt val: " DEPARTMENT_CHOICE
+
+case "$DEPARTMENT_CHOICE" in
+    1)
+        DEPARTMENT="administration"
+        DEPARTMENT_NAME="Administration"
+        ;;
+    2)
+        DEPARTMENT="it"
+        DEPARTMENT_NAME="IT"
+        ;;
+    3)
+        DEPARTMENT="ekonomi"
+        DEPARTMENT_NAME="Ekonomi"
+        ;;
+    4)
+        DEPARTMENT="produktion"
+        DEPARTMENT_NAME="Produktion"
+        ;;
+    *)
+        echo "Felaktigt val av avdelning."
+        exit 1
+        ;;
+esac
+
+
+# ----------------------------------------------------------
+# 6. Välj roll
+# ----------------------------------------------------------
+
+echo
+echo "Välj roll:"
+echo "1) Administratör"
+echo "2) Chef"
+echo "3) Medarbetare"
+echo "4) Tekniker"
+echo
+
+read -p "Ditt val: " ROLE_CHOICE
+
+case "$ROLE_CHOICE" in
+    1)
+        ROLE="Administratör"
+        ;;
+    2)
+        ROLE="Chef"
+        ;;
+    3)
+        ROLE="Medarbetare"
+        ;;
+    4)
+        ROLE="Tekniker"
+        ;;
+    *)
+        echo "Felaktigt val av roll."
+        exit 1
+        ;;
+esac
+
+
+# ----------------------------------------------------------
+# 7. Skapa avdelningsgruppen om den inte finns
+# ----------------------------------------------------------
+
+if ! getent group "$DEPARTMENT" > /dev/null; then
+    groupadd "$DEPARTMENT"
+    echo "Gruppen '$DEPARTMENT' skapades."
+else
+    echo "Gruppen '$DEPARTMENT' finns redan."
+fi
+
+
+# ----------------------------------------------------------
+# 8. Skapa användaren
+# ----------------------------------------------------------
+
+useradd \
+    -m \
+    -s /bin/bash \
+    -c "$FULLNAME" \
+    -G "$DEPARTMENT" \
+    "$USERNAME"
+
+if [ $? -ne 0 ]; then
+    echo "Fel: Kunde inte skapa användaren."
+    exit 1
+fi
+
+
+# ----------------------------------------------------------
+# 9. Skapa privata mappar
+# ----------------------------------------------------------
+
+USER_HOME="/home/$USERNAME"
+
+mkdir -p "$USER_HOME/Dokument"
+mkdir -p "$USER_HOME/Bilder"
+mkdir -p "$USER_HOME/Appar"
+mkdir -p "$USER_HOME/Videos"
+
+
+# ----------------------------------------------------------
+# 10. Ge användaren ägarskap över mapparna
+# ----------------------------------------------------------
+
+chown -R "$USERNAME:$DEPARTMENT" "$USER_HOME"
+
+
+# ----------------------------------------------------------
+# 11. Skydda användarens privata mappar
+# ----------------------------------------------------------
+
+chmod 700 "$USER_HOME/Dokument"
+chmod 700 "$USER_HOME/Bilder"
+chmod 700 "$USER_HOME/Appar"
+chmod 700 "$USER_HOME/Videos"
+
+
+# ----------------------------------------------------------
+# 12. Skapa välkomstfil
+# ----------------------------------------------------------
+
+cat > "$USER_HOME/VÄLKOMMEN.txt" << EOF
+==================================================
+                 VÄLKOMMEN!
+==================================================
+
+Hej $FULLNAME!
+
+Ditt användarkonto har nu skapats.
+
+Användarnamn : $USERNAME
+Avdelning    : $DEPARTMENT_NAME
+Roll         : $ROLE
+
+Du har fått tillgång till följande privata mappar:
+
+- Dokument
+- Bilder
+- Appar
+- Videos
+
+Dessa mappar är privata och kan endast användas
+av ditt användarkonto.
+
+Du är medlem i avdelningen:
+
+$DEPARTMENT_NAME
+
+Välkommen till organisationen!
+
+==================================================
+EOF
+
+
+# ----------------------------------------------------------
+# 13. Ändra ägare på välkomstfilen
+# ----------------------------------------------------------
+
+chown "$USERNAME:$DEPARTMENT" "$USER_HOME/VÄLKOMMEN.txt"
+
+chmod 600 "$USER_HOME/VÄLKOMMEN.txt"
+
+
+# ----------------------------------------------------------
+# 14. Hitta andra användare på samma avdelning
+# ----------------------------------------------------------
+
+OTHER_USERS=$(getent group "$DEPARTMENT" | cut -d: -f4)
+
+
+# ----------------------------------------------------------
+# 15. Slutlig information
+# ----------------------------------------------------------
+
+echo
+echo "=============================================="
+echo "        ANVÄNDAREN HAR SKAPATS"
+echo "=============================================="
+echo
+echo "Namn       : $FULLNAME"
+echo "Användare  : $USERNAME"
+echo "Avdelning  : $DEPARTMENT_NAME"
+echo "Roll       : $ROLE"
+echo
+echo "Privata mappar:"
+echo "  /home/$USERNAME/Dokument"
+echo "  /home/$USERNAME/Bilder"
+echo "  /home/$USERNAME/Appar"
+echo "  /home/$USERNAME/Videos"
+echo
+
+echo "Andra användare på avdelningen:"
+echo
+
+if [ -z "$OTHER_USERS" ]; then
+    echo "Inga andra användare finns ännu."
+else
+    echo "$OTHER_USERS" | tr ',' '\n'
+fi
+
+echo
+echo "=============================================="
+echo "Välkommen, $FULLNAME!"
+echo "=============================================="
+```
+
+---
+
+## 15. Bilaga E: Testsviten `testa_oscar.sh`
+
+Passerar `shellcheck` 0.9.0 utan anmärkningar.
+
+```bash
+#!/usr/bin/env bash
+#
+# testa_oscar.sh
+# Testar Oscars interaktiva skript (oscar_skapa_anvandare.sh) genom att
+# mata in svaren via stdin, och skriver en sammanfattning som Markdown-tabell.
+#
+# VARNING: Kör endast i en test-VM. Testsviten skapar och tar bort
+# användarna anna, kollega, utomstaende, ny, Erik, kolon och bslash samt
+# grupperna administration, it, ekonomi och produktion.
+#
+# Användning:
+#   sudo ./testa_oscar.sh ./oscar_skapa_anvandare.sh | tee testresultat_oscar.txt
+#   sudo ./testa_oscar.sh -y ...   (hoppa över bekräftelsen)
+
+# Medvetet utan -e: tester ska kunna misslyckas utan att sviten avbryts
+set -uo pipefail
+
+if locale -a 2>/dev/null | grep -qiE '^c\.utf-?8$'; then
+    export LC_ALL=C.UTF-8
+fi
+
+ANVANDARE=(anna kollega utomstaende ny Erik kolon bslash)
+GRUPPER=(administration it ekonomi produktion)
+ARBETSKATALOG="$(mktemp -d)"
+UT="$ARBETSKATALOG/ut.txt"
+RC=0
+GODKANDA=0
+TOTALT=0
+declare -a TABELL=()
+trap 'rm -rf "$ARBETSKATALOG"' EXIT
+
+# ---------- Kontroller ----------
+
+if [[ "$EUID" -ne 0 ]]; then
+    echo "Kör som root: sudo $0 skript" >&2
+    exit 1
+fi
+
+BEKRAFTA=1
+if [[ "${1:-}" == "-y" ]]; then
+    BEKRAFTA=0
+    shift
+fi
+
+SKRIPT="${1:-}"
+if [[ ! -f "$SKRIPT" ]]; then
+    echo "Användning: sudo $0 [-y] ./oscar_skapa_anvandare.sh" >&2
+    exit 1
+fi
+
+if (( BEKRAFTA )); then
+    echo "Testsviten skapar och TAR BORT användare och grupperna ${GRUPPER[*]}."
+    read -rp "Kör endast i en test-VM. Skriv JA för att fortsätta: " svar
+    [[ "$svar" == "JA" ]] || { echo "Avbrutet."; exit 0; }
+fi
+
+# ---------- Hjälpfunktioner ----------
+
+stada() {
+    local u g
+    for u in "${ANVANDARE[@]}"; do
+        if id "$u" &>/dev/null; then
+            pkill -KILL -u "$u" &>/dev/null
+            userdel --remove "$u" &>/dev/null
+        fi
+    done
+    for g in "${GRUPPER[@]}"; do
+        if getent group "$g" >/dev/null; then
+            groupdel "$g" &>/dev/null
+        fi
+    done
+}
+
+# Kör skriptet och matar in varje argument som en rad på stdin
+kor_med_svar() {
+    printf '%s\n' "$@" | TERM=xterm timeout 60 bash "$SKRIPT" >"$UT" 2>&1
+    RC=$?
+}
+
+notera() {
+    local namn="$1" faktiskt="$2" forvantat="$3" res
+    TOTALT=$(( TOTALT + 1 ))
+    if [[ "$faktiskt" == "$forvantat" ]]; then
+        res="Godkänt"
+        GODKANDA=$(( GODKANDA + 1 ))
+    else
+        res="**UNDERKÄNT** (${faktiskt})"
+    fi
+    TABELL+=("| ${namn} | ${forvantat} | ${res} |")
+    printf '  %s%*s %s\n' "$namn" $(( 56 - ${#namn} )) '' "$res"
+}
+
+ja_nej() {
+    if "$@" &>/dev/null; then echo ja; else echo nej; fi
+}
+
+atkomst() {
+    local anv="$1"; shift
+    if runuser -u "$anv" -- "$@" &>/dev/null; then echo OK; else echo NEKAS; fi
+}
+
+medlem() {
+    [[ " $(id -nG "$1" 2>/dev/null) " == *" $2 "* ]]
+}
+
+listad_i_grupp() {
+    [[ ",$(getent group "$2" | cut -d: -f4)," == *",$1,"* ]]
+}
+
+har_losenord() {
+    local falt
+    falt="$(getent shadow "$1" | cut -d: -f2)"
+    [[ -n "$falt" && "$falt" != '!'* && "$falt" != '*'* ]]
+}
+
+maste_byta_losenord() {
+    grep -q 'must be changed' <<<"$(LC_ALL=C chage -l "$1" 2>/dev/null)"
+}
+
+privata_mappar_ok() {
+    local m
+    for m in Dokument Bilder Appar Videos; do
+        [[ "$(stat -c '%a:%U' "/home/$1/$m" 2>/dev/null)" == "700:$1" ]] || return 1
+    done
+}
+
+ny_anvandare_utelamnas() {
+    ! sed -n '/Andra användare/,/^=====/p' "$UT" | grep -qx "$1"
+}
+
+inga_andringar() {
+    local g
+    id ny &>/dev/null && return 1
+    for g in "${GRUPPER[@]}"; do
+        getent group "$g" >/dev/null && return 1
+    done
+    return 0
+}
+
+rc_skild_fran_noll() {
+    (( RC != 0 ))
+}
+
+avbrot_utan_andringar() {
+    (( RC != 0 )) && inga_andringar
+}
+
+misslyckad_useradd_utan_rester() {
+    (( RC != 0 )) && ! getent group produktion >/dev/null
+}
+
+# ---------- Testerna ----------
+
+echo "Testsvit startad $(date '+%Y-%m-%d %H:%M:%S') mot ${SKRIPT}"
+stada
+
+echo "-- Grundfunktion (anna, Ekonomi, Medarbetare)"
+kor_med_svar anna "Anna Andersson" 3 3
+cp "$UT" "$ARBETSKATALOG/forsta.txt"
+notera "Körning: returkod" "$RC" 0
+notera "Användaren skapad" "$(ja_nej id anna)" ja
+notera "Fullständigt namn sparat" "$(getent passwd anna | cut -d: -f5)" "Anna Andersson"
+notera "Skal" "$(getent passwd anna | cut -d: -f7)" /bin/bash
+notera "Tilläggsgrupp ekonomi (id)" "$(ja_nej medlem anna ekonomi)" ja
+notera "Listad i getent group ekonomi" "$(ja_nej listad_i_grupp anna ekonomi)" ja
+notera "Privata mappar: finns, 700, ägs av anna" "$(ja_nej privata_mappar_ok anna)" ja
+notera "VÄLKOMMEN.txt: mode" "$(stat -c %a /home/anna/VÄLKOMMEN.txt 2>/dev/null || echo saknas)" 600
+UT="$ARBETSKATALOG/forsta.txt"
+notera "Utskrift: nya användaren listas inte som 'annan'" "$(ja_nej ny_anvandare_utelamnas anna)" ja
+UT="$ARBETSKATALOG/ut.txt"
+
+echo "-- Lösenord"
+notera "Lösenord satt (kan logga in)" "$(ja_nej har_losenord anna)" ja
+notera "Lösenordsbyte krävs" "$(ja_nej maste_byta_losenord anna)" ja
+
+echo "-- Sekretess i hemkatalogen"
+useradd -m -G ekonomi kollega &>/dev/null
+useradd -m utomstaende &>/dev/null
+runuser -u anna -- bash -c 'echo hemligt > ~/anteckningar.txt; echo privat > ~/Dokument/cv.txt' &>/dev/null
+notera "Kollega listar annas hemkatalog" "$(atkomst kollega ls /home/anna)" NEKAS
+notera "Kollega läser fil i hemkatalogens rot" "$(atkomst kollega cat /home/anna/anteckningar.txt)" NEKAS
+notera "Kollega läser .bashrc" "$(atkomst kollega cat /home/anna/.bashrc)" NEKAS
+notera "Kollega läser Dokument/cv.txt" "$(atkomst kollega cat /home/anna/Dokument/cv.txt)" NEKAS
+notera "Kollega läser VÄLKOMMEN.txt" "$(atkomst kollega cat /home/anna/VÄLKOMMEN.txt)" NEKAS
+notera "Utomstående listar annas hemkatalog" "$(atkomst utomstaende ls /home/anna)" NEKAS
+notera "Anna skriver i Dokument" "$(atkomst anna touch /home/anna/Dokument/ny.txt)" OK
+
+echo "-- Felfall och validering"
+kor_med_svar anna "X" 3 3
+notera "Befintlig användare avvisas" "$(ja_nej rc_skild_fran_noll)" ja
+stada
+
+kor_med_svar ny "Ny" 9
+notera "Ogiltig avdelning: avbryter utan ändringar" "$(ja_nej avbrot_utan_andringar)" ja
+stada
+
+kor_med_svar ny "Ny" 3 9
+notera "Ogiltig roll: avbryter utan ändringar" "$(ja_nej avbrot_utan_andringar)" ja
+stada
+
+kor_med_svar Erik "Erik E" 2 3
+notera "Versaler i användarnamn avvisas" "$(id Erik &>/dev/null && echo nej || echo ja)" ja
+stada
+
+kor_med_svar kolon "A:B" 4 3
+notera "Misslyckad useradd lämnar ingen grupp kvar" "$(ja_nej misslyckad_useradd_utan_rester)" ja
+stada
+
+kor_med_svar bslash 'Per\Olsson' 3 3
+notera "Backslash i namn bevaras" "$(getent passwd bslash | cut -d: -f5)" 'Per\Olsson'
+stada
+
+# Skriptet matas in via stdin så att nobody inte behöver läsrätt till filen
+runuser -u nobody -- bash -s <"$SKRIPT" &>/dev/null
+RC=$?
+notera "Icke-root avvisas" "$(ja_nej rc_skild_fran_noll)" ja
+stada
+
+# ---------- Sammanfattning ----------
+
+echo
+echo "=== SAMMANFATTNING ==="
+echo
+echo "| Test | Förväntat | $(basename "$SKRIPT") |"
+echo "|---|---|---|"
+printf '%s\n' "${TABELL[@]}"
+echo
+echo "$(basename "$SKRIPT"): ${GODKANDA} av ${TOTALT} godkända"
+```
+
+---
+
+## 16. Bilaga F: Testutskrift för Oscars skript
+
+Utskriften från [`testresultat_oscar.txt`](testresultat_oscar.txt).
+
+```text
+Testsvit startad 2026-09-16 11:57:42 mot oscar_skapa_anvandare.sh
+-- Grundfunktion (anna, Ekonomi, Medarbetare)
+  Körning: returkod                                        Godkänt
+  Användaren skapad                                        Godkänt
+  Fullständigt namn sparat                                 Godkänt
+  Skal                                                     Godkänt
+  Tilläggsgrupp ekonomi (id)                               Godkänt
+  Listad i getent group ekonomi                            Godkänt
+  Privata mappar: finns, 700, ägs av anna                  Godkänt
+  VÄLKOMMEN.txt: mode                                      Godkänt
+  Utskrift: nya användaren listas inte som 'annan'         **UNDERKÄNT** (nej)
+-- Lösenord
+  Lösenord satt (kan logga in)                             **UNDERKÄNT** (nej)
+  Lösenordsbyte krävs                                      **UNDERKÄNT** (nej)
+-- Sekretess i hemkatalogen
+  Kollega listar annas hemkatalog                          **UNDERKÄNT** (OK)
+  Kollega läser fil i hemkatalogens rot                    **UNDERKÄNT** (OK)
+  Kollega läser .bashrc                                    **UNDERKÄNT** (OK)
+  Kollega läser Dokument/cv.txt                            Godkänt
+  Kollega läser VÄLKOMMEN.txt                              Godkänt
+  Utomstående listar annas hemkatalog                      Godkänt
+  Anna skriver i Dokument                                  Godkänt
+-- Felfall och validering
+  Befintlig användare avvisas                              Godkänt
+  Ogiltig avdelning: avbryter utan ändringar               Godkänt
+  Ogiltig roll: avbryter utan ändringar                    Godkänt
+  Versaler i användarnamn avvisas                          **UNDERKÄNT** (nej)
+  Misslyckad useradd lämnar ingen grupp kvar               **UNDERKÄNT** (nej)
+  Backslash i namn bevaras                                 **UNDERKÄNT** (PerOlsson)
+  Icke-root avvisas                                        Godkänt
+
+=== SAMMANFATTNING ===
+
+| Test | Förväntat | oscar_skapa_anvandare.sh |
+|---|---|---|
+| Körning: returkod | 0 | Godkänt |
+| Användaren skapad | ja | Godkänt |
+| Fullständigt namn sparat | Anna Andersson | Godkänt |
+| Skal | /bin/bash | Godkänt |
+| Tilläggsgrupp ekonomi (id) | ja | Godkänt |
+| Listad i getent group ekonomi | ja | Godkänt |
+| Privata mappar: finns, 700, ägs av anna | ja | Godkänt |
+| VÄLKOMMEN.txt: mode | 600 | Godkänt |
+| Utskrift: nya användaren listas inte som 'annan' | ja | **UNDERKÄNT** (nej) |
+| Lösenord satt (kan logga in) | ja | **UNDERKÄNT** (nej) |
+| Lösenordsbyte krävs | ja | **UNDERKÄNT** (nej) |
+| Kollega listar annas hemkatalog | NEKAS | **UNDERKÄNT** (OK) |
+| Kollega läser fil i hemkatalogens rot | NEKAS | **UNDERKÄNT** (OK) |
+| Kollega läser .bashrc | NEKAS | **UNDERKÄNT** (OK) |
+| Kollega läser Dokument/cv.txt | NEKAS | Godkänt |
+| Kollega läser VÄLKOMMEN.txt | NEKAS | Godkänt |
+| Utomstående listar annas hemkatalog | NEKAS | Godkänt |
+| Anna skriver i Dokument | OK | Godkänt |
+| Befintlig användare avvisas | ja | Godkänt |
+| Ogiltig avdelning: avbryter utan ändringar | ja | Godkänt |
+| Ogiltig roll: avbryter utan ändringar | ja | Godkänt |
+| Versaler i användarnamn avvisas | ja | **UNDERKÄNT** (nej) |
+| Misslyckad useradd lämnar ingen grupp kvar | ja | **UNDERKÄNT** (nej) |
+| Backslash i namn bevaras | Per\Olsson | **UNDERKÄNT** (PerOlsson) |
+| Icke-root avvisas | ja | Godkänt |
+
+oscar_skapa_anvandare.sh: 16 av 25 godkända
 ```
