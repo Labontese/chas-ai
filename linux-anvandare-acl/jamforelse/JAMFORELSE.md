@@ -15,7 +15,8 @@ Alla tester kördes i Ubuntu 24.04.4 LTS den 16 september 2026, med `runuser -u`
 7. Testmatris: Oscars 25 tester
 8. Lagningar och vad de gav
 9. Vad jämförelserna visar
-10. Köra om jämförelserna
+10. Modelljämförelse: Claude, Gemini och ChatGPT
+11. Köra om jämförelserna
 
 ---
 
@@ -252,7 +253,47 @@ För Gemini tar den minsta lagningen i README avsnitt 8.2 (`set -E`, ny lösenor
 
 ---
 
-## 10. Köra om jämförelserna
+## 10. Modelljämförelse: Claude, Gemini och ChatGPT
+
+> **Viktig brasklapp:** Claude och Gemini fick **samma avancerade prompt** (avsnitt 1.3) och kan
+> jämföras rakt av. ChatGPT (Oscars variant) fick en **annan, vardaglig prompt** (avsnitt 1.6),
+> löser en annan uppgift och testas med en **egen svit på 25 tester**. ChatGPT kan därför inte
+> rangordnas mot de andra två — bara beskrivas på sina egna villkor.
+
+### Funktion
+
+| | Claude | Gemini | ChatGPT (Oscar) |
+|---|---|---|---|
+| Testresultat | **49 av 49** (härdad prompt: 48 av 49) | **30 av 49** | **16 av 25** (egen svit) |
+| Samma prompt som Claude | — | Ja | Nej (annan uppgift) |
+| Rättighetsmodell (setgid/sticky/ACL) | Korrekt | Korrekt när skriptet går igenom | Finns inte (annan tolkning) |
+| Idempotent omkörning | Ja | Delvis (befintlig användare läggs inte i gruppen) | Nej (avbryter) |
+| Felhantering | `set -Eeuo pipefail` och fungerande `trap` | `trap` som aldrig triggas (saknar `-E`) | Kontroll efter `useradd` |
+| Fatalt fel | Nej | Ja — lösenordsraden kraschar alltid (SIGPIPE 141); kontot blir utan lösenord men körning 2 säger ändå "ok" | Inget lösenord sätts |
+
+### Säkerhet
+
+| | Claude | Gemini | ChatGPT (Oscar) |
+|---|---|---|---|
+| Lösenord inte i `ps` (`chpasswd` via stdin) | Ja | Ja | Sätter inget lösenord |
+| Lösenord inte i loggfil | Ja | Ja | Ingen logg |
+| Lösenord inte i omdirigerad utdata | Ja (bara mot terminal) | Nej (skrivs alltid ut) | — |
+| Loggfil skyddad | 640 root:adm | 644, läsbar för alla | Ingen logg |
+| Skydd mot systemkataloger | Ja (`realpath -m`, hela underträd) | Nej (`-p /etc` gav `chmod 3770 /etc`) | Ej relevant (fast sökväg) |
+| Indatavalidering | Alla namn, max 32 tecken | Delvis | Ingen (`read` utan `-r`) |
+| Minsta privilegium (grupp) | `-G` (egen primärgrupp) | `-g` (avdelning blir primärgrupp) | `-G` |
+| "Privat" är faktiskt privat | Ja | Ja | Nej — `chown -R user:avdelning` ger hela avdelningen läsrätt till hemkatalogen och dotfiler, trots att välkomstfilen påstår motsatsen |
+
+### Slutsats
+
+- **Med samma prompt vinner Claude tydligt över Gemini (49 mot 30).** Skillnaden ligger inte i rättighetsmodellen — den var rätt hos båda — utan i robusthet, säkerhet och Geminis tysta, fatala lösenordsfel.
+- **ChatGPT kan inte rangordnas mot de andra**, eftersom det fick en annan prompt och löser en annan uppgift. På sina egna villkor är det läsbart och användarvänligt, men har reella säkerhetsluckor: inget lösenord, "privat" som inte är privat och ingen validering.
+- **Prompten avgör lika mycket som modellen.** Geminis värsta fel (`trap` som aldrig fungerar) kom av att den följde prompten bokstavligt (`set -euo pipefail` utan `-E`). ChatGPTs avvikelse kom av en luddig prompt. Den härdade prompten (avsnitt 1.4) rättar just sådana fällor.
+- **Ingen modell var felfri.** Testerna hittade riktiga buggar även i Claudes skript (`/usr/local` släpptes igenom, loggfil först 644), som är lagade. Lärdomen: verifiera med tester oavsett modell.
+
+---
+
+## 11. Köra om jämförelserna
 
 Kör endast i en test-VM. Sviterna skapar och tar bort användare, grupper och `/srv/ekonomi`.
 
